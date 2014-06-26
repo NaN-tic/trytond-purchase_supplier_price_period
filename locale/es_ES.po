@@ -1,0 +1,23 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:purchase.product_supplier.price,end_date:"
+msgid "End Date"
+msgstr "Fecha final"
+
+msgctxt "field:purchase.product_supplier.price,start_date:"
+msgid "Start Date"
+msgstr "Fecha inicial"
+
+msgctxt "field:purchase.product_supplier.price,valid:"
+msgid "Valid"
+msgstr "Válido"
+
+msgctxt "help:purchase.product_supplier.price,end_date:"
+msgid "Ending date for this price entry to be valid."
+msgstr "Fecha final para que este precio sea válido."
+
+msgctxt "help:purchase.product_supplier.price,start_date:"
+msgid "Starting date for this price entry to be valid."
+msgstr "Fecha de inicio para que este precio sea válido."

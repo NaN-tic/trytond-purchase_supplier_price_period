@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/tree/field[@name='quantity']" position="after">
+        <field name="start_date"/>
+        <field name="end_date"/>
+    </xpath>
+    <xpath expr="/tree" position="inside">
+        <field name="valid"/>
+    </xpath>
+</data>
