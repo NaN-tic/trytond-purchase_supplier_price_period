@@ -9,3 +9,6 @@ def register():
         Product,
         ProductSupplierPrice,
         module='purchase_supplier_price_period', type_='model')
+    Pool.register(
+        CreatePurchase,
+        module='stock_supply', type_='wizard')

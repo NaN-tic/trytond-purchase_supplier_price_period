@@ -2,9 +2,10 @@
 # copyright notices and license terms.
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
+from trytond.pyson import Bool, Eval, If
 from trytond.transaction import Transaction
 
-__all__ = ['Product', 'ProductSupplierPrice']
+__all__ = ['Product', 'ProductSupplierPrice', 'CreatePurchase']
 __metaclass__ = PoolMeta
 
 
@@ -18,23 +19,37 @@ class Product:
         SupplierPrice = pool.get('purchase.product_supplier.price')
         Uom = pool.get('product.uom')
 
-        context = Transaction().context
-        with Transaction().set_context(_datetime=context.get('purchase_date')):
-            for price in SupplierPrice.search([
-                        ('product_supplier', '=', product_supplier.id),
-                        ('valid', '=', True),
-                        ]):
-                if Uom.compute_qty(self.purchase_uom,
-                        price.quantity, to_uom) <= quantity:
-                    return price.unit_price
+        res = None
+        for price in SupplierPrice.search([
+                    ('product_supplier', '=', product_supplier.id),
+                    ('valid', '=', True),
+                    ]):
+            if Uom.compute_qty(self.purchase_uom,
+                    price.quantity, to_uom) <= quantity:
+                res = price.unit_price
+        return res
 
 
 class ProductSupplierPrice:
     __name__ = 'purchase.product_supplier.price'
 
-    start_date = fields.Date('Start Date',
+    start_date = fields.Date('Start Date', domain=[
+            ['OR',
+                ('start_date', '=', None),
+                If(Bool(Eval('end_date', None)),
+                    ('start_date', '<=', Eval('end_date', None)),
+                    ('start_date', '!=', None)),
+                ]
+            ], depends=['end_date'],
         help='Starting date for this price entry to be valid.')
-    end_date = fields.Date('End Date',
+    end_date = fields.Date('End Date', domain=[
+            ['OR',
+                ('end_date', '=', None),
+                If(Bool(Eval('start_date', None)),
+                    ('end_date', '>=', Eval('start_date', None)),
+                    ('end_date', '!=', None)),
+                ]
+            ], depends=['start_date'],
         help='Ending date for this price entry to be valid.')
     valid = fields.Function(fields.Boolean('Valid'),
         'on_change_with_valid', searcher='search_valid')
@@ -44,7 +59,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = (context['_datetime'] if context.get('_datetime')
+        today = (context['purchase_date'] if context.get('purchase_date')
             else Date.today())
         return ((not self.start_date or self.start_date <= today) and
             (not self.end_date or self.end_date >= today))
@@ -54,7 +69,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = (context['_datetime'] if context.get('_datetime')
+        today = (context['purchase_date'] if context.get('purchase_date')
             else Date.today())
         return [
             ['OR',
@@ -66,3 +81,13 @@ class ProductSupplierPrice:
                 ('end_date', '>=', today),
                 ],
             ]
+
+
+class CreatePurchase:
+    __name__ = 'purchase.request.create_purchase'
+
+    @classmethod
+    def compute_purchase_line(cls, request, purchase):
+        with Transaction().set_context(purchase_date=purchase.purchase_date):
+            return super(CreatePurchase, cls).compute_purchase_line(request,
+                purchase)
