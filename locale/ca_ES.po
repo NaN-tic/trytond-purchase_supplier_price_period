@@ -2,6 +2,14 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "error:purchase.product_supplier.price:"
+msgid ""
+"The prices \"%(first)s\" and \"%(second)s\" for supplier \"%(supplier)s\" "
+"overlap."
+msgstr ""
+"Els preus \"%(first)s\" i \"%(second)s\" per al proveïdor \"%(supplier)s\" "
+"es solapen amb el temps."
+
 msgctxt "field:purchase.product_supplier.price,end_date:"
 msgid "End Date"
 msgstr "Data final"

@@ -54,6 +54,16 @@ class ProductSupplierPrice:
     valid = fields.Function(fields.Boolean('Valid'),
         'on_change_with_valid', searcher='search_valid')
 
+    @classmethod
+    def __setup__(cls):
+        super(ProductSupplierPrice, cls).__setup__()
+        cls._order.insert(0, ('start_date', 'DESC'))
+        cls._order.insert(1, ('end_date', 'DESC'))
+        cls._error_messages.update({
+                'prices_overlap': ('The prices "%(first)s" and "%(second)s" '
+                    'for supplier "%(supplier)s" overlap.'),
+                })
+
     @fields.depends('start_date', 'end_date')
     def on_change_with_valid(self, name=None):
         Date = Pool().get('ir.date')
@@ -81,6 +91,56 @@ class ProductSupplierPrice:
                 ('end_date', '>=', today),
                 ],
             ]
+
+    @classmethod
+    def validate(cls, prices):
+        super(ProductSupplierPrice, cls).validate(prices)
+        for price in prices:
+            price.check_dates()
+
+    def check_dates(self):
+        cursor = Transaction().cursor
+        table = self.__table__()
+
+        domain = [
+            ('product_supplier', '=', self.product_supplier.id),
+            ('quantity', '=', self.quantity),
+            ('id', '!=', self.id),
+            ]
+        if self.start_date and self.end_date:
+            domain += [
+                ['OR',
+                    ('start_date', '=', None),
+                    ('start_date', '<=', self.end_date),
+                    ],
+                ['OR',
+                    ('end_date', '=', None),
+                    ('end_date', '>=', self.start_date),
+                    ],
+                ]
+        elif self.start_date:  # end_date == None
+            domain += [
+                ['OR',
+                    ('end_date', '=', None),
+                    ('end_date', '>=', self.start_date),
+                    ],
+                ]
+        elif self.end_date:  # start_date == None
+            domain += [
+                ['OR',
+                    ('start_date', '=', None),
+                    ('start_date', '<=', self.end_date),
+                    ],
+                ]
+        # if start_date and end_date == None => any with same supplier and
+        # quantity is wrong
+        overlapping_prices = self.search(domain)
+        if overlapping_prices:
+            self.raise_user_error('prices_overlap', {
+                    'first': str(self.unit_price),
+                    'second': str(overlapping_prices[0].unit_price),
+                    'supplier': self.product_supplier.party.rec_name,
+                    })
 
 
 class CreatePurchase:
