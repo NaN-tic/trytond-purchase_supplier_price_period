@@ -3,7 +3,7 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="/form/field[@name='product_supplier']" position="after">
-        <label name="end_date"/>
+        <label name="start_date"/>
         <field name="start_date"/>
         <label name="end_date"/>
         <field name="end_date"/>

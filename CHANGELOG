@@ -1,1 +1,5 @@
+* Replace invalid end_date label for start_date in form view
+* Add domains to start/end date to don't allow end date previous than start
+
+Version 3.2.0 - 2014-06-26
 * Initial release
