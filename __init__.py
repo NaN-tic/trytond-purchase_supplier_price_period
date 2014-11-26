@@ -11,4 +11,4 @@ def register():
         module='purchase_supplier_price_period', type_='model')
     Pool.register(
         CreatePurchase,
-        module='stock_supply', type_='wizard')
+        module='purchase_supplier_price_period', type_='wizard')
