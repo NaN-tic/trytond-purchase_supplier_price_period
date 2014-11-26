@@ -1,3 +1,4 @@
+* Fix module name when add wizard to Pool
 * Check two supplier prices for same quantity doesn't overlap
 * Replace invalid end_date label for start_date in form view
 * Add domains to start/end date to don't allow end date previous than start
