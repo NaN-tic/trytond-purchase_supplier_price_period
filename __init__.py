@@ -6,7 +6,6 @@ from .product import *
 
 def register():
     Pool.register(
-        Product,
         ProductSupplierPrice,
         module='purchase_supplier_price_period', type_='model')
     Pool.register(

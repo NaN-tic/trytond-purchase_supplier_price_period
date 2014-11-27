@@ -5,29 +5,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Bool, Eval, If
 from trytond.transaction import Transaction
 
-__all__ = ['Product', 'ProductSupplierPrice', 'CreatePurchase']
+__all__ = ['ProductSupplierPrice', 'CreatePurchase']
 __metaclass__ = PoolMeta
-
-
-class Product:
-    __name__ = 'product.product'
-
-    # This method is added in trytond-patches. In trunk 'get_purchase_price'
-    # use the new match() method of purchase.product_supplier.price
-    def get_supplier_price(self, product_supplier, quantity, to_uom):
-        pool = Pool()
-        SupplierPrice = pool.get('purchase.product_supplier.price')
-        Uom = pool.get('product.uom')
-
-        res = None
-        for price in SupplierPrice.search([
-                    ('product_supplier', '=', product_supplier.id),
-                    ('valid', '=', True),
-                    ]):
-            if Uom.compute_qty(self.purchase_uom,
-                    price.quantity, to_uom) <= quantity:
-                res = price.unit_price
-        return res
 
 
 class ProductSupplierPrice:
@@ -141,6 +120,12 @@ class ProductSupplierPrice:
                     'second': str(overlapping_prices[0].unit_price),
                     'supplier': self.product_supplier.party.rec_name,
                     })
+
+    @classmethod
+    def get_pattern(cls):
+        pattern = super(ProductSupplierPrice, cls).get_pattern()
+        pattern['valid'] = True
+        return pattern
 
 
 class CreatePurchase:

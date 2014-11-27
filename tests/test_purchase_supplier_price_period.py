@@ -39,8 +39,8 @@ class TestCase(unittest.TestCase):
         'Test depends'
         test_depends()
 
-    def test0010get_supplier_price(self):
-        'Test get_supplier_price and get_purchase_price'
+    def test0010product_supplier_price_pattern_and_match(self):
+        'Test product.product_supplier.price get_pattern and match'
         with Transaction().start(DB_NAME, USER, context=CONTEXT):
             company, = self.company.search([
                     ('rec_name', '=', 'Dunder Mifflin'),
@@ -100,75 +100,67 @@ class TestCase(unittest.TestCase):
             yesterday = today + relativedelta(days=-1)
             in10days = today + relativedelta(days=10)
 
+            pattern = self.supplier_price.get_pattern()
             with Transaction().set_context(supplier=supplier.id):
-                # Check without supplier price
-                self.assertIsNone(product.get_supplier_price(product_supplier,
-                        0, product.default_uom))
-                self.assertEqual(
-                    self.product.get_purchase_price([product])[product.id],
-                    Decimal(10))
-
                 # Check supplier price without dates
-                supplier_price, = self.supplier_price.create([{
+                supplier_price1, = self.supplier_price.create([{
                             'product_supplier': product_supplier.id,
                             'quantity': 0,
                             'unit_price': Decimal(12),
                             }])
-                self.assertIsNotNone(
-                    product.get_supplier_price(product_supplier, 0,
-                        product.default_uom))
-                self.assertEqual(
-                    self.product.get_purchase_price([product])[product.id],
-                    Decimal(12))
+                self.assertTrue(supplier_price1.match(0, product.default_uom,
+                        pattern))
 
                 # Check supplier price with old date
-                supplier_price.end_date = yesterday
-                supplier_price.save()
-                self.assertIsNone(product.get_supplier_price(product_supplier,
-                        0, product.default_uom))
-                self.assertEqual(
-                    self.product.get_purchase_price([product])[product.id],
-                    Decimal(10))
+                supplier_price1.end_date = yesterday
+                supplier_price1.save()
+                self.assertFalse(supplier_price1.match(0, product.default_uom,
+                        pattern))
 
                 # Check supplier price with old and future date
-                supplier_price, = self.supplier_price.create([{
+                supplier_price2, = self.supplier_price.create([{
                             'product_supplier': product_supplier.id,
                             'quantity': 0,
                             'start_date': in10days,
                             'unit_price': Decimal(14),
                             }])
-                self.assertIsNone(product.get_supplier_price(product_supplier,
-                        0, product.default_uom))
-                self.assertEqual(
-                    self.product.get_purchase_price([product])[product.id],
-                    Decimal(10))
+                self.assertFalse(supplier_price2.match(0, product.default_uom,
+                        pattern))
 
                 # Check supplier price with current dates
-                supplier_price, = self.supplier_price.create([{
+                supplier_price3, = self.supplier_price.create([{
                             'product_supplier': product_supplier.id,
                             'quantity': 0,
                             'start_date': today,
                             'end_date': in10days + relativedelta(days=-1),
                             'unit_price': Decimal(16),
                             }])
-                self.assertIsNotNone(
-                    product.get_supplier_price(product_supplier, 0,
-                        product.default_uom))
-                self.assertEqual(
-                    self.product.get_purchase_price([product])[product.id],
-                    Decimal(16))
+                self.assertTrue(supplier_price3.match(0, product.default_uom,
+                        pattern))
 
                 # Check supplir price for past purchase date
                 with Transaction().set_context(purchase_date=yesterday):
-                    self.assertEqual(
-                        self.product.get_purchase_price([product])[product.id],
-                        Decimal(12))
+                    (supplier_price1, supplier_price2, supplier_price3
+                        ) = self.supplier_price.browse([supplier_price1.id,
+                                supplier_price2.id, supplier_price3.id])
+                    self.assertTrue(supplier_price1.match(0,
+                            product.default_uom, pattern))
+                    self.assertFalse(supplier_price2.match(0,
+                            product.default_uom, pattern))
+                    self.assertFalse(supplier_price3.match(0,
+                            product.default_uom, pattern))
 
                 # Check supplir price for future purchase date
                 with Transaction().set_context(purchase_date=in10days):
-                    self.assertEqual(
-                        self.product.get_purchase_price([product])[product.id],
-                        Decimal(14))
+                    (supplier_price1, supplier_price2, supplier_price3
+                        ) = self.supplier_price.browse([supplier_price1.id,
+                                supplier_price2.id, supplier_price3.id])
+                    self.assertFalse(supplier_price1.match(0,
+                            product.default_uom, pattern))
+                    self.assertTrue(supplier_price2.match(0,
+                            product.default_uom, pattern))
+                    self.assertFalse(supplier_price3.match(0,
+                            product.default_uom, pattern))
 
 
 def suite():
