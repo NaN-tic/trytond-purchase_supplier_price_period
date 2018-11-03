@@ -48,7 +48,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = context.get('purchase_date', Date.today())
+        today = context.get('purchase_date') or Date.today()
         return ((not self.start_date or self.start_date <= today) and
             (not self.end_date or self.end_date >= today))
 
@@ -120,7 +120,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = context.get('purchase_date', Date.today())
+        today = context.get('purchase_date') or Date.today()
 
         if not ((not self.start_date or self.start_date <= today) and
                 (not self.end_date or self.end_date >= today)):
