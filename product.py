@@ -6,11 +6,11 @@ from trytond.pyson import Bool, Eval, If
 from trytond.transaction import Transaction
 
 __all__ = ['ProductSupplierPrice', 'CreatePurchase']
-__metaclass__ = PoolMeta
 
 
 class ProductSupplierPrice:
     __name__ = 'purchase.product_supplier.price'
+    __metaclass__ = PoolMeta
 
     start_date = fields.Date('Start Date', domain=[
             ['OR',
@@ -48,8 +48,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = (context['purchase_date'] if context.get('purchase_date')
-            else Date.today())
+        today = context.get('purchase_date', Date.today())
         return ((not self.start_date or self.start_date <= today) and
             (not self.end_date or self.end_date >= today))
 
@@ -58,8 +57,7 @@ class ProductSupplierPrice:
         Date = Pool().get('ir.date')
 
         context = Transaction().context
-        today = (context['purchase_date'] if context.get('purchase_date')
-            else Date.today())
+        today = context.get('purchase_date', Date.today())
         return [
             ['OR',
                 ('start_date', '=', None),
@@ -78,9 +76,6 @@ class ProductSupplierPrice:
             price.check_dates()
 
     def check_dates(self):
-        cursor = Transaction().cursor
-        table = self.__table__()
-
         domain = [
             ('product_supplier', '=', self.product_supplier.id),
             ('quantity', '=', self.quantity),
@@ -121,15 +116,21 @@ class ProductSupplierPrice:
                     'supplier': self.product_supplier.party.rec_name,
                     })
 
-    @classmethod
-    def get_pattern(cls):
-        pattern = super(ProductSupplierPrice, cls).get_pattern()
-        pattern['valid'] = True
-        return pattern
+    def match(self, quantity, uom, pattern):
+        Date = Pool().get('ir.date')
+
+        context = Transaction().context
+        today = context.get('purchase_date', Date.today())
+
+        if not ((not self.start_date or self.start_date <= today) and
+                (not self.end_date or self.end_date >= today)):
+            return False
+        return super(ProductSupplierPrice, self).match(quantity, uom, pattern)
 
 
 class CreatePurchase:
     __name__ = 'purchase.request.create_purchase'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def compute_purchase_line(cls, request, purchase):
