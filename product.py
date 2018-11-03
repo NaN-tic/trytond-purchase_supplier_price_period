@@ -8,9 +8,8 @@ from trytond.transaction import Transaction
 __all__ = ['ProductSupplierPrice', 'CreatePurchase']
 
 
-class ProductSupplierPrice:
+class ProductSupplierPrice(metaclass=PoolMeta):
     __name__ = 'purchase.product_supplier.price'
-    __metaclass__ = PoolMeta
 
     start_date = fields.Date('Start Date', domain=[
             ['OR',
@@ -128,9 +127,8 @@ class ProductSupplierPrice:
         return super(ProductSupplierPrice, self).match(quantity, uom, pattern)
 
 
-class CreatePurchase:
+class CreatePurchase(metaclass=PoolMeta):
     __name__ = 'purchase.request.create_purchase'
-    __metaclass__ = PoolMeta
 
     @classmethod
     def compute_purchase_line(cls, request, purchase):
