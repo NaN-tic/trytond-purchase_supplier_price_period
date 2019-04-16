@@ -4,6 +4,8 @@ from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Bool, Eval, If
 from trytond.transaction import Transaction
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['ProductSupplierPrice', 'CreatePurchase']
 
@@ -37,10 +39,6 @@ class ProductSupplierPrice(metaclass=PoolMeta):
         super(ProductSupplierPrice, cls).__setup__()
         cls._order.insert(0, ('start_date', 'DESC'))
         cls._order.insert(1, ('end_date', 'DESC'))
-        cls._error_messages.update({
-                'prices_overlap': ('The prices "%(first)s" and "%(second)s" '
-                    'for supplier "%(supplier)s" overlap.'),
-                })
 
     @fields.depends('start_date', 'end_date')
     def on_change_with_valid(self, name=None):
@@ -109,11 +107,10 @@ class ProductSupplierPrice(metaclass=PoolMeta):
         # quantity is wrong
         overlapping_prices = self.search(domain)
         if overlapping_prices:
-            self.raise_user_error('prices_overlap', {
-                    'first': str(self.unit_price),
-                    'second': str(overlapping_prices[0].unit_price),
-                    'supplier': self.product_supplier.party.rec_name,
-                    })
+            raise UserError(gettext('prices_overlap',
+                    first=str(self.unit_price),
+                    second=str(overlapping_prices[0].unit_price),
+                    supplier=self.product_supplier.party.rec_name))
 
     def match(self, quantity, uom, pattern):
         Date = Pool().get('ir.date')
