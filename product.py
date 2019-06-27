@@ -128,7 +128,7 @@ class CreatePurchase(metaclass=PoolMeta):
     __name__ = 'purchase.request.create_purchase'
 
     @classmethod
-    def compute_purchase_line(cls, request, purchase):
+    def compute_purchase_line(cls, key, requests, purchase):
         with Transaction().set_context(purchase_date=purchase.purchase_date):
-            return super(CreatePurchase, cls).compute_purchase_line(request,
-                purchase)
+            return super(CreatePurchase, cls).compute_purchase_line(key,
+                requests, purchase)
