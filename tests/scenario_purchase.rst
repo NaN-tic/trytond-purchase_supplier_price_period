@@ -80,7 +80,6 @@ Create product::
     >>> template.default_uom = unit
     >>> template.type = 'goods'
     >>> template.purchasable = True
-    >>> template.salable = True
     >>> template.list_price = Decimal(10)
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
@@ -93,7 +92,6 @@ Create product::
     >>> ps = ProductSupplier()
     >>> ps.product = template
     >>> ps.party = supplier
-    >>> ps.delivery_time = 2
     >>> ps.save()
 
     >>> SupplierPrice = Model.get('purchase.product_supplier.price')
