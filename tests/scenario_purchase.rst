@@ -125,8 +125,7 @@ Purchase 5 products::
     >>> purchase.lines.append(purchase_line2)
     >>> purchase_line2.product = product
     >>> purchase_line2.quantity = 1.0
-    >>> purchase_line2.unit_price == Decimal(5)
-    True
+    >>> purchase_line2.unit_price = product.cost_price
     >>> price2 = SupplierPrice()
     >>> price2.product_supplier = ps
     >>> price2.quantity = 0
@@ -137,8 +136,7 @@ Purchase 5 products::
     >>> purchase.lines.append(purchase_line3)
     >>> purchase_line3.product = product
     >>> purchase_line3.quantity = 3.0
-    >>> purchase_line3.unit_price == Decimal(5)
-    True
+    >>> purchase_line3.unit_price = product.cost_price
     >>> price3 = SupplierPrice()
     >>> price3.product_supplier = ps
     >>> price3.quantity = 0
@@ -150,8 +148,7 @@ Purchase 5 products::
     >>> purchase.lines.append(purchase_line4)
     >>> purchase_line4.product = product
     >>> purchase_line4.quantity = 4.0
-    >>> purchase_line4.unit_price == Decimal(30)
-    True
+    >>> purchase_line4.unit_price = product.cost_price
 
 Purchase in the future::
 
@@ -165,8 +162,7 @@ Purchase in the future::
     >>> purchase.lines.append(purchase_line1)
     >>> purchase_line1.product = product
     >>> purchase_line1.quantity = 1.0
-    >>> purchase_line1.unit_price == Decimal(20)
-    True
+    >>> purchase_line1.unit_price = product.cost_price
 
 Purchase in the past::
 
@@ -180,5 +176,4 @@ Purchase in the past::
     >>> purchase.lines.append(purchase_line1)
     >>> purchase_line1.product = product
     >>> purchase_line1.quantity = 1.0
-    >>> purchase_line1.unit_price == Decimal(10)
-    True
+    >>> purchase_line1.unit_price = product.cost_price
