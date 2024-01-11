@@ -20,7 +20,7 @@ class ProductSupplierPrice(metaclass=PoolMeta):
                     ('start_date', '<=', Eval('end_date', None)),
                     ('start_date', '!=', None)),
                 ]
-            ], depends=['end_date'],
+            ],
         help='Starting date for this price entry to be valid.')
     end_date = fields.Date('End Date', domain=[
             ['OR',
@@ -29,7 +29,7 @@ class ProductSupplierPrice(metaclass=PoolMeta):
                     ('end_date', '>=', Eval('start_date', None)),
                     ('end_date', '!=', None)),
                 ]
-            ], depends=['start_date'],
+            ],
         help='Ending date for this price entry to be valid.')
     valid = fields.Function(fields.Boolean('Valid'),
         'on_change_with_valid', searcher='search_valid')
