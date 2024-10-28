@@ -1,14 +1,6 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
-
-msgctxt "error:purchase.product_supplier.price:"
-msgid ""
-"The prices \"%(first)s\" and \"%(second)s\" for supplier \"%(supplier)s\" "
-"overlap."
-msgstr ""
-"Els preus \"%(first)s\" i \"%(second)s\" per al proveïdor \"%(supplier)s\" "
-"es solapen amb el temps."
 
 msgctxt "field:purchase.product_supplier.price,end_date:"
 msgid "End Date"
@@ -29,3 +21,9 @@ msgstr "Data final perque aquest preu sigui vàlid."
 msgctxt "help:purchase.product_supplier.price,start_date:"
 msgid "Starting date for this price entry to be valid."
 msgstr "Data inicial perque aquest preu sigui vàlid."
+
+msgctxt "model:ir.message,text:msg_prices_overlap"
+msgid "The prices \"%(first)s\" and \"%(second)s\" for supplier \"%(supplier)s\" overlap."
+msgstr ""
+"Els preus \"%(first)s\" i \"%(second)s\" per al proveïdor \"%(supplier)s\" "
+"es solapen amb el temps."
