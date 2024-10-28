@@ -7,8 +7,6 @@ from trytond.transaction import Transaction
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-__all__ = ['ProductSupplierPrice', 'CreatePurchase']
-
 
 class ProductSupplierPrice(metaclass=PoolMeta):
     __name__ = 'purchase.product_supplier.price'
@@ -107,7 +105,7 @@ class ProductSupplierPrice(metaclass=PoolMeta):
         # quantity is wrong
         overlapping_prices = self.search(domain)
         if overlapping_prices:
-            raise UserError(gettext('prices_overlap',
+            raise UserError(gettext('purchase_supplier_price_period.msg_prices_overlap',
                     first=str(self.unit_price),
                     second=str(overlapping_prices[0].unit_price),
                     supplier=self.product_supplier.party.rec_name))

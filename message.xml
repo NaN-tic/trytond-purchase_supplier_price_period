@@ -3,7 +3,7 @@
 this repository contains the full copyright notices and license terms. -->
 <tryton>
     <data grouped="1">
-      <record model="ir.message" id="prices_overlap">
+      <record model="ir.message" id="msg_prices_overlap">
           <field name="text">The prices "%(first)s" and "%(second)s" for supplier "%(supplier)s" overlap.</field>
       </record>
     </data>
