@@ -88,7 +88,7 @@ class Test(unittest.TestCase):
         product, = template.products
         ProductSupplier = Model.get('purchase.product_supplier')
         ps = ProductSupplier()
-        ps.product = template
+        ps.product = product
         ps.party = supplier
         ps.save()
         SupplierPrice = Model.get('purchase.product_supplier.price')
