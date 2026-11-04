@@ -1,0 +1,33 @@
+#
+msgid ""
+msgstr ""
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:purchase.product_supplier.price,end_date:"
+msgid "End Date"
+msgstr "结账日期"
+
+msgctxt "field:purchase.product_supplier.price,start_date:"
+msgid "Start Date"
+msgstr "启用日期"
+
+msgctxt "field:purchase.product_supplier.price,valid:"
+msgid "Valid"
+msgstr "有效"
+
+msgctxt "help:purchase.product_supplier.price,end_date:"
+msgid "Ending date for this price entry to be valid."
+msgstr "此价格条目有效期的结束日期。"
+
+msgctxt "help:purchase.product_supplier.price,start_date:"
+msgid "Starting date for this price entry to be valid."
+msgstr "此价格条目有效期的开始日期。"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_prices_overlap"
+msgid "The prices \"%(first)s\" and \"%(second)s\" for supplier \"%(supplier)s\" overlap."
+msgstr "供应商“%(supplier)s”的价格“%(first)s”和“%(second)s”的有效期重叠。"
